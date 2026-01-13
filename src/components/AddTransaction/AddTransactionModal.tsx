@@ -1,32 +1,16 @@
 import React, { useState, useRef } from 'react';
-
-interface Transaction {
-  id: number;
-  date: string;
-  desc: string;
-  amount: number | string;
-  cat: string;
-  approved: boolean;
-}
-
-interface ManualEntry {
-  date: string;
-  desc: string;
-  amount: string;
-  cat: string;
-}
+import { useTransactions } from '../../hooks/useTransaction.ts';  // Adjust path
+import { ManualEntry, ReviewTransaction } from '../../types/index.ts'; // Adjust path
 
 interface AddTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (transactions: Transaction[]) => Promise<void>;
 }
 
 const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  onSave 
+  isOpen, onClose 
 }) => {
+  const { addTransactions } = useTransactions();
   const [mode, setMode] = useState<'manual' | 'upload'>('manual');
   const [stage, setStage] = useState<'input' | 'processing' | 'review'>('input');
   const [file, setFile] = useState<File | null>(null);
@@ -40,7 +24,7 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   });
 
   // Staging State (The AI Parsed Data)
-  const [parsedTxns, setParsedTxns] = useState<Transaction[]>([]);
+  const [parsedTxns, setParsedTxns] = useState<any[]>([]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -61,12 +45,15 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
     
     // MOCK: This simulates your backend 'parser.py' running OCR + Sonar
     setTimeout(() => {
-      const mockLLMResponse: Transaction[] = [
-        { id: 1, date: '2025-10-12', desc: 'STARBUCKS COFFEE', amount: 14.50, cat: 'Food', approved: true },
-        { id: 2, date: '2025-10-13', desc: 'UBER TRIP 8492', amount: 32.20, cat: 'Transport', approved: true },
-        { id: 3, date: '2025-10-14', desc: 'AMZN Mktp US', amount: 129.99, cat: 'Shopping', approved: true },
-        { id: 4, date: '2025-10-15', desc: 'UNKNOWN CHARGE', amount: 0.00, cat: 'Uncategorized', approved: false },
-      ];
+      const mockLLMResponse: any[] = [  // ✅ any[] - hook maps to DB
+        { 
+          date: '2025-10-12', 
+          desc: 'STARBUCKS COFFEE', 
+          amount: 14.50, 
+          cat: 'Food', 
+          approved: true 
+        },      
+    ];
       setParsedTxns(mockLLMResponse);
       setStage('review');
     }, 2500);
@@ -78,19 +65,30 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
     ));
   };
 
-  const updateField = (id: number, field: keyof Transaction, value: string | number) => {
+  const updateField = (id: number, field: keyof ReviewTransaction, value: string | number) => {
     setParsedTxns(prev => prev.map(t => 
       t.id === id ? { ...t, [field]: value } : t
-    ));
+    ) as any[]);
   };
 
-  const finalizeTransactions = () => {
+  const finalizeTransactions = async() => {
     const approvedOnly = parsedTxns.filter(t => t.approved);
-    onSave(approvedOnly);
+    await addTransactions(approvedOnly);
     onClose();
     // Reset
     setStage('input');
     setParsedTxns([]);
+  };
+
+  // Manual entry:
+  const handleManualSave = async () => {
+    await addTransactions([{ 
+      date: manualEntry.date,
+      desc: manualEntry.desc,
+      amount: manualEntry.amount,
+      cat: manualEntry.cat 
+    }]);
+    onClose();
   };
 
   // --- Renders ---
@@ -146,15 +144,7 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       <button 
         className="btn-primary" 
         style={{ width: '100%' }} 
-        onClick={() => { 
-          onSave([{ 
-            ...manualEntry, 
-            id: Date.now(), 
-            amount: Number(manualEntry.amount), 
-            approved: true 
-          }]);
-          onClose(); 
-        }}
+        onClick={handleManualSave}
       >
         Add Expense
       </button>

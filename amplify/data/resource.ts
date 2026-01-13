@@ -31,9 +31,6 @@ const schema = a.schema({
 
 export type Schema = ClientSchema<typeof schema>;
 
-export const postConfirmation = defineFunction({
-  name: 'post-confirmation',
-});
 
 export const data = defineData({
   schema,

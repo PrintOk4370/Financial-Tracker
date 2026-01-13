@@ -136,6 +136,49 @@ input[type="text"], input[type="password"], input[type="email"] {
   margin: 0 auto;
 }
 
+.nav-sidebar {
+  width: 280px;
+  background: rgba(21, 30, 50, 0.95);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: #9CA3AF;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+}
+
+.nav-btn:hover {
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+
+.nav-btn.active {
+  background: linear-gradient(135deg, var(--primary-teal), #0ea5a8);
+  color: white;
+  box-shadow: 0 4px 20px rgba(45,212,191,0.3);
+}
+
+.logout:hover {
+  background: rgba(239,68,68,0.1) !important;
+  color: #F87171 !important;
+}
+
+
 /* Layout & Containers */
 .landing-page {
   height: 100vh;
