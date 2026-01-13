@@ -1,6 +1,6 @@
 // src/components/charts/SankeyFlow.tsx
 import React, { useMemo } from 'react';
-import type { Transaction } from '../types/index.ts';
+import type { Transaction } from '../../types/index.ts';
 
 interface SankeyFlowProps {
   transactions: Transaction[];

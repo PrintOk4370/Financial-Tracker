@@ -5,7 +5,7 @@ import {
   CategoryScale, LinearScale, PointElement, LineElement,
   Title, Tooltip, Legend, Filler
 } from 'chart.js';
-import type { CategoryDonutProps } from '../types';
+import type { CategoryDonutProps } from '../../types/index.ts';
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Title, Tooltip, Legend);
 

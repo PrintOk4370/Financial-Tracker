@@ -1,5 +1,5 @@
 import React from 'react';
-import type { StatCardProps } from '../types';
+import type { StatCardProps } from '../../types';
 
 
 const StatCard: React.FC<StatCardProps> = ({ label, value, trend, isPositive }) => (

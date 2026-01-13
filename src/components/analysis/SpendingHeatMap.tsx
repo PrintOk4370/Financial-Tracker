@@ -1,7 +1,7 @@
 // src/components/charts/SpendingHeatmap.tsx
 import React from 'react';
-import type { Transaction } from '../types/index.ts';
-import type { HeatmapDay } from '../types/index.ts';
+import type { Transaction } from '../../types/index.ts';
+import type { HeatmapDay } from '../../types/index.ts';
 
 interface SpendingHeatmapProps {
   transactions: Transaction[];
