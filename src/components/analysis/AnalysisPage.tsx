@@ -6,7 +6,6 @@ import { useChartData } from '../../hooks/useChartData.ts';
 import BudgetGauge from '../analysis/BudgetGauge.tsx';
 import SpendingHeatmap from '../analysis/SpendingHeatMap.tsx';
 import SankeyFlow from '../analysis/SankeyFlow';
-import StatCard from '../analysis/StatCard';
 import IncomeVsExpenseChart from '../analysis/IncomeVsExpenseChart';
 import CategoryDonut from '../analysis/CategoryDonut';
 
