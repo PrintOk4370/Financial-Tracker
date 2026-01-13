@@ -1,5 +1,4 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
-import { defineFunction } from '@aws-amplify/backend';
 
 const schema = a.schema({
   FixedCost: a.model({  // Renamed from Subscription (reserved)

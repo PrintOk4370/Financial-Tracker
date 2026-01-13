@@ -13,7 +13,7 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   const { addTransactions } = useTransactions();
   const [mode, setMode] = useState<'manual' | 'upload'>('manual');
   const [stage, setStage] = useState<'input' | 'processing' | 'review'>('input');
-  const [file, setFile] = useState<File | null>(null);
+  //const [/*file,*/ setFile] = useState<File | null>(null);
   
   // Manual Form State
   const [manualEntry, setManualEntry] = useState<ManualEntry>({ 
@@ -31,11 +31,11 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   if (!isOpen) return null;
 
   // --- Handlers ---
-
+/* 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
     if (selected) {
-      setFile(selected);
+      //setFile(selected);
       simulateLLMParsing(selected);
     }
   };
@@ -57,7 +57,7 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       setParsedTxns(mockLLMResponse);
       setStage('review');
     }, 2500);
-  };
+  }; */
 
   const toggleApproval = (id: number) => {
     setParsedTxns(prev => prev.map(t => 
@@ -168,7 +168,7 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         ref={fileInputRef} 
         style={{ display: 'none' }} 
         accept=".pdf,.jpg,.png" 
-        onChange={handleFileUpload} 
+        //onChange={handleFileUpload} 
       />
       <div style={{ fontSize: '3rem', marginBottom: '10px' }}>📄</div>
       <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>Drop Statement or Click to Upload</div>
@@ -268,7 +268,7 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           style={{ flex: 1 }} 
           onClick={() => { 
             setStage('input'); 
-            setFile(null); 
+            //setFile(null); 
           }}
         >
           Discard
