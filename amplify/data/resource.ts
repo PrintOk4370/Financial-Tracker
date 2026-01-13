@@ -1,26 +1,32 @@
-// amplify/data/resource.ts
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { defineFunction } from '@aws-amplify/backend';
 
 const schema = a.schema({
-  Subscription: a.model({  // Your fixed costs model
+  FixedCost: a.model({  // Renamed from Subscription (reserved)
     name: a.string(),
     cost: a.float(),
-  }).authorization(allow => [allow.owner()]),  // Owner-only access
+  }).authorization(allow => [allow.owner()]),
 
-  Transaction: a.model({  // Expenses/transactions
-    date: a.string(),
-    desc: a.string(),
-    amount: a.float(),
-    cat: a.string(),
-  }).authorization(allow => [allow.owner()]),  // Owner-only access
+  Expense: a.model({
+    expenseDate: a.string().required(),
+    description: a.string(),
+    amount: a.float().required(),
+    category: a.string().required(),
+    merchant: a.string(),
+    userID: a.string().required(),
+  }).authorization(allow => [allow.owner()]),
 
-  UserProfile: a.model({
+  User: a.model({
     email: a.string(),
-    profileOwner: a.string(), // Links to Cognito 'sub'
-  }).authorization(allow => [
-    allow.ownerDefinedIn('profileOwner'), // This model is isolated per user
-  ]),
+    name: a.string(),
+    currency: a.string(),
+    budgetMonthly: a.float(),
+    timezone: a.string(),
+    phone: a.string(),
+    lastLogin: a.string(),
+    isActive: a.boolean(),
+    profileOwner: a.string().required(),
+  }).authorization(allow => [allow.ownerDefinedIn('profileOwner')]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

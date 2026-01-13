@@ -19,7 +19,7 @@ interface ManualEntry {
 interface AddTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (transactions: Transaction[]) => void;
+  onSave: (transactions: Transaction[]) => Promise<void>;
 }
 
 const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ 

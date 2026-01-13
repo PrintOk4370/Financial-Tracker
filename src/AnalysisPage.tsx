@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import type { ChartData, ChartOptions } from 'chart.js';
 import {
   Chart as ChartJS,
@@ -15,7 +15,14 @@ import {
 } from 'chart.js';
 import { Doughnut, Line } from 'react-chartjs-2';
 import AddTransactionModal from './AddTransactionModal.tsx';
+import outputs from '../amplify_outputs.json';  // Adjust path to your amplify_outputs.json (usually ../ or ../../)
+import { Amplify } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../amplify/data/resource';  // Adjust path to your resource.ts
+import { getCurrentUser } from 'aws-amplify/auth';
 
+Amplify.configure(outputs);
+const client = generateClient<Schema>();
 
 // --- Types ---
 interface StatCardProps {
@@ -31,18 +38,24 @@ interface BudgetGaugeProps {
 }
 
 interface Transaction {
-  // Define based on your backend schema
-  amount: number | String;
-  category?: string;
-  date?: string;
+  id: string;
+  amount: number;
+  category: string;
+  expenseDate: string;  // Match your Expense model
   description?: string;
+  userID: string;
+  merchant?: string;
+  createdAt?: string;
 }
+
 
 interface AddTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (transactions: Transaction[]) => void;
+  onSave: (transactions: Transaction[]) => Promise<void>;  // Add Promise<void>
 }
+
+
 
 // --- Chart.js Registration ---
 ChartJS.register(
@@ -88,8 +101,46 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, trend, isPositive }) 
   </div>
 );
 
-const IncomeVsExpenseChart: React.FC = () => {
+interface IncomeVsExpenseProps {
+  transactions: Transaction[];
+}
+
+const IncomeVsExpenseChart: React.FC<IncomeVsExpenseProps> = ({ transactions }) => {
+  // Aggregate monthly outflow (expenses) - adapt for inflow if you have Subscriptions model
+  const monthlyOutflow: Record<string, number> = {};
+  transactions.forEach(t => {
+    if (t.expenseDate) {
+      const month = new Date(t.expenseDate).toLocaleDateString('en-US', { month: 'short' });
+      monthlyOutflow[month] = (monthlyOutflow[month] || 0) + Number(t.amount);
+    }
+  });
+
+  const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];  // Customize months
+  const outflowData = labels.map(m => Math.round(monthlyOutflow[m] || 0));
+  const inflowData = outflowData.map(d => d * 1.6);  // Mock inflow (replace with real Subscriptions data)
+
+  const data: ChartData<'line'> = {
+    labels,
+    datasets: [
+      {
+        label: 'Inflow',
+        data: inflowData as number[],
+        borderColor: '#2DD4BF',
+        backgroundColor: 'rgba(45, 212, 191, 0.1)',
+        fill: true,
+      },
+      {
+        label: 'Outflow',
+         data:outflowData as number[],
+        borderColor: '#FB7185',
+        backgroundColor: 'transparent',
+        borderDash: [5, 5],
+      },
+    ],
+  };
+
   const options: ChartOptions<'line'> = {
+    // ... your existing options unchanged
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -116,50 +167,47 @@ const IncomeVsExpenseChart: React.FC = () => {
     }
   };
 
-  const data: ChartData<'line'> = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [  // <- Fixed: use "datasets" property
-      {
-        label: 'Inflow',
-        data:[5000, 5200, 5100, 5800, 6200, 6400],  // <- Fixed: "data" property
-        borderColor: '#2DD4BF',
-        backgroundColor: 'rgba(45, 212, 191, 0.1)',
-        fill: true,
-      },
-      {
-        label: 'Outflow',
-        data: [3000, 3500, 2800, 4200, 3800, 4100],  // <- Fixed: "data" property
-        borderColor: '#FB7185',
-        backgroundColor: 'transparent',
-        borderDash: [5, 5], 
-      },
-    ],
-  };
-
   return <Line options={options} data={data} />;
 };
 
 
-const CategoryDonut: React.FC = () => {
-  const data: ChartData<'doughnut'> = {
-    labels: ['Housing', 'Food', 'Transport', 'Savings', 'Ent.'],
-    datasets: [  // <- Fixed: use "datasets" property
+
+interface CategoryDonutProps {
+  transactions: Transaction[];
+}
+
+const CategoryDonut: React.FC<CategoryDonutProps> = ({ transactions }) => {
+  // Aggregate by category
+  const catTotals: Record<string, number> = {};
+  transactions.forEach(t => {
+    const cat = t.category || 'Other';
+    catTotals[cat] = (catTotals[cat] || 0) + Number(t.amount);
+  });
+
+  const labels = Object.keys(catTotals);
+  const dataValues = Object.values(catTotals);
+
+  const data:  ChartData<'doughnut'> = {
+    labels,
+    datasets: [
       {
-        data: [35, 20, 10, 25, 10],  // <- Fixed: "data" property
-        backgroundColor: ['#818CF8', '#FB7185', '#FBBF24', '#2DD4BF', '#9CA3AF'],
+        data: dataValues,
+        backgroundColor: ['#818CF8', '#FB7185', '#FBBF24', '#2DD4BF', '#9CA3AF', '#F59E0B'],  // Cycle colors
         borderWidth: 0,
         hoverOffset: 10
       },
     ]
   };
 
-  const options: ChartOptions<'doughnut'> = {  // <- Fixed: ChartOptions not ChartJS.ChartOptions
+  const options: ChartOptions<'doughnut'> = {
     cutout: '75%',
     maintainAspectRatio: false,
     plugins: {
       legend: { position: 'right' as const, labels: { boxWidth: 10, color: '#9CA3AF', font: {size: 11} } }
     }
   };
+
+  const total = dataValues.reduce((sum, v) => sum + v, 0);
 
   return (
     <div style={{ position: 'relative', height: '100%', width: '100%', display: 'flex', alignItems: 'center' }}>
@@ -169,11 +217,14 @@ const CategoryDonut: React.FC = () => {
         textAlign: 'center'
       }}>
         <div style={{ fontSize: '0.7rem', color: '#9CA3AF' }}>TOTAL</div>
-        <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#F3F4F6' }}>$4.2k</div>
+        <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#F3F4F6' }}>
+          ${Math.round(total).toLocaleString()}
+        </div>
       </div>
     </div>
   );
 };
+
 
 
 const BudgetGauge: React.FC<BudgetGaugeProps> = ({ current, limit }) => {
@@ -343,12 +394,58 @@ const SankeyFlow: React.FC = () => {
 const AnalysisPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const handleNewTransactions = (transactions: Transaction[]): void => {
-    // In a real app, this is where you'd merge the new data
-    // into your chart datasets or refresh the data from the backend.
-    console.log('Adding new transactions to database:', transactions);
-    alert(`Successfully processed ${transactions.length} transactions.`);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [userId, setUserId] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+
+  // Fetch user & live transactions
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const user = await getCurrentUser();
+        const sub = user.userId;  // Cognito sub for owner filter
+        setUserId(sub);
+
+        // Initial load
+        const { data } = await client.models.Expense.list();  // or .Expense
+        setTransactions((data || []) as Transaction[]);
+        // Live updates (real-time)
+        const subLive = client.models.Expense.observeQuery().subscribe(({ items }) => {
+          setTransactions(items as Transaction[]);
+          setLoading(false);
+        });
+
+        return () => subLive.unsubscribe();
+      } catch (error) {
+        console.error('Auth/data error:', error);
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+
+    const handleNewTransactions = async (newTransactions: any[]) => {
+    try {
+      for (const t of newTransactions) {
+        await client.models.Expense.create({  // Your model name
+        expenseDate: t.expenseDate || new Date().toISOString().split('T')[0],  // expenseDate not date
+        amount: Number(t.amount),
+        category: t.category || 'Other',
+        userID: userId,
+        description: t.description,
+        merchant: (t as any).merchant,  // If modal has it
+      });
+
+      }
+      // Live sub auto-refreshes charts
+      console.log(`Added ${newTransactions.length} transactions`);
+    } catch (error) {
+      console.error('Save error:', error);
+    }
+    setIsModalOpen(false);
   };
+
 
   return (
     <div className="animate-enter" style={{ position: 'relative' }}>
@@ -383,7 +480,7 @@ const AnalysisPage: React.FC = () => {
         <div className="card" style={{ height: '320px' }}>
           <h3 style={{ marginBottom: '20px' }}>Inflow vs Outflow</h3>
           <div style={{ height: '240px' }}>
-            <IncomeVsExpenseChart />
+            <IncomeVsExpenseChart transactions={transactions} />
           </div>
         </div>
         <div
@@ -419,7 +516,7 @@ const AnalysisPage: React.FC = () => {
         <div className="card" style={{ height: '300px' }}>
           <h3 style={{ marginBottom: '10px' }}>Category Breakdown</h3>
           <div style={{ height: '220px' }}>
-            <CategoryDonut />
+            <CategoryDonut transactions={transactions} />
           </div>
         </div>
       </div>
@@ -483,12 +580,12 @@ const AnalysisPage: React.FC = () => {
         +
       </button>
 
-      {/* Add Transaction Modal */}
       <AddTransactionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSave={handleNewTransactions}
+        onSave={async (newTransactions) => handleNewTransactions(newTransactions)}  // Wrap in async
       />
+
     </div>
   );
 };
