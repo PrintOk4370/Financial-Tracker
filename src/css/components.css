@@ -1,0 +1,75 @@
+/* Components - Cards, Buttons, Inputs, Glass */
+.card {
+  background-color: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(45, 212, 191, 0.2);
+}
+
+.btn-primary {
+  background-color: var(--primary-teal);
+  color: var(--bg-deep);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--text-muted);
+  color: var(--text-main);
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.glass-panel {
+  background: rgba(21, 30, 50, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary-teal);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(45, 212, 191, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--primary-teal);
+  animation: spin 1s ease-in-out infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

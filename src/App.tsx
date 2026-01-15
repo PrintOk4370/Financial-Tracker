@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Amplify } from 'aws-amplify';
 import { Authenticator, useAuthenticator } from '@aws-amplify/ui-react';
 import outputs from '../amplify_outputs.json';
-import './css/App.css';
-
+import './css/base.css';
+import './css/components.css';
+import './css/layout.css';
+import './css/nav.css'
+import './css/pages.css'
 // Components
 import LandingPage from './components/auth/LandingPage';
 import NavSidebar from './components/layout/NavSidebar';
