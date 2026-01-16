@@ -1,0 +1,220 @@
+/* === MODAL OVERLAY & CONTAINER === */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalCard {
+  width: 600px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* === TAB NAVIGATION === */
+.tabHeader {
+  display: flex;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 20px;
+}
+
+.tabButton {
+  flex: 1;
+  padding: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.tabButtonActive {
+  color: var(--primary-teal);
+  border-bottom: 2px solid var(--primary-teal);
+}
+
+.tabButtonInactive {
+  color: var(--text-muted);
+}
+
+.tabButton:hover {
+  color: white;
+}
+
+/* === CLOSE BUTTON === */
+.closeButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.closeButton:hover {
+  color: white;
+}
+
+/* === MANUAL ENTRY FORM === */
+.manualFormGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.manualDescInput {
+  margin-bottom: 16px;
+}
+
+.manualCategorySelect {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.manualSaveButton {
+  width: 100%;
+}
+
+/* === UPLOAD PANEL === */
+.uploadArea {
+  text-align: center;
+  padding: 20px;
+  border: 2px dashed rgba(255,255,255,0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.uploadArea:hover {
+  border-color: rgba(45,212,191,0.3);
+}
+
+.uploadIcon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.uploadTitle {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.uploadSubtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* === PROCESSING VIEW === */
+.processingContainer {
+  text-align: center;
+  padding: 40px;
+}
+
+.processingTitle {
+  margin-top: 20px;
+}
+
+.processingText {
+  color: var(--text-muted);
+}
+
+/* === REVIEW TABLE === */
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.reviewCount {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.reviewTableContainer {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+}
+
+.reviewTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.reviewThead {
+  background: rgba(255,255,255,0.05);
+  position: sticky;
+  top: 0;
+}
+
+.reviewTh {
+  padding: 12px;
+}
+
+.reviewThRight {
+  text-align: right;
+}
+
+.reviewRowApproved {
+  opacity: 1;
+}
+
+.reviewRowUnapproved {
+  opacity: 0.5;
+}
+
+.reviewCheckbox {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary-teal);
+}
+
+.reviewInput {
+  background: transparent;
+  border: none;
+  color: inherit;
+  padding: 4px;
+}
+
+.reviewDateInput {
+  width: 90px;
+}
+
+.reviewAmountInput {
+  width: 70px;
+  text-align: right;
+}
+
+.reviewActionButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* === ANIMATIONS === */
+.animateEnter {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
