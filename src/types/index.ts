@@ -52,7 +52,7 @@ export interface ReviewTransaction {
  * 🧭 APP STATE (Routing + Views)
  */
 export type View = 'landing' | 'signup' | 'login' | 'dashboard';
-export type Tab = 'analysis' | 'forecast' | 'settings';
+export type Tab = 'analysis' | 'forecast' | 'expenses' | 'settings';
 
 
 /**

@@ -19,6 +19,9 @@ const NavSidebar: React.FC<NavSidebarProps> = ({ activeTab, onTabChange, onLogou
       <button className={`btn-ghost ${activeTab === 'forecast' ? 'btn-primary' : ''}`} onClick={() => onTabChange('forecast')}>
         Forecast
       </button>
+      <button className={`btn-ghost ${activeTab === 'expenses' ? 'btn-primary' : ''}`} onClick={() => onTabChange('expenses')}>
+        Expenses
+      </button>
       <button className={`btn-ghost ${activeTab === 'settings' ? 'btn-primary' : ''}`} onClick={() => onTabChange('settings')}>
         Settings
       </button>
