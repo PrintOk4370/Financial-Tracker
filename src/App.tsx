@@ -14,7 +14,7 @@ import DashboardHeader from './components/layout/DashboardHeader';
 import AnalysisPage from './components/analysis/AnalysisPage';
 import ForecastPage from './components/forecast/ForecastPage';
 import SignUpPage from './components/auth/SignUpPage';
-import SettingsTab from './components/settings.tsx';
+import SettingsTab from './components/Settings.tsx';
 import ExpensesTab from './components/ExpensesPage.tsx';
 // Types
 import type { View, Tab } from './types';

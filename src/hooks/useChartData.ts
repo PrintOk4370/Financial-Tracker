@@ -25,7 +25,7 @@ export const useChartData = (transactions: Transaction[]) => {
         monthly[month] = (monthly[month] || 0) + t.amount;
       }
     });
-    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const outflow = labels.map(m => Math.round(monthly[m] || 0));
     return {
       labels,

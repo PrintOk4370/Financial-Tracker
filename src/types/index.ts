@@ -116,3 +116,12 @@ export interface CategoryDonutProps {
     total: number;
   };
 }
+
+export interface ForecastChartProps {
+  lineData: {
+    labels: string[];
+    outflow: number[];
+  };
+  riskFactor: number;
+  onRiskFactorChange: (value: number) => void;
+}
